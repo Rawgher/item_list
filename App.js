@@ -1,18 +1,8 @@
-import * as firebase from "firebase";
 import React, { Component } from "react";
 import { ListView, Text, TouchableHighlight, View } from "react-native";
 import Toolbar from "./components/Toolbar/Toolbar";
+import firebaseApp from "./firebase";
 const styles = require("./components/style.js");
-
-const firebaseConfig = {
-  apiKey: "AIzaSyDmnHDkDzUgbJZppR5I4-hIwMJAEITl9HA",
-  authDomain: "item-lister-2.firebaseapp.com",
-  databaseURL: "https://item-lister-2.firebaseio.com",
-  projectId: "item-lister-2",
-  storageBucket: "item-lister-2.appspot.com"
-};
-
-const firebaseApp = firebase.initializeApp(firebaseConfig);
 
 export default class App extends Component {
   constructor() {
@@ -22,7 +12,8 @@ export default class App extends Component {
       itemDataSource: ds
     };
 
-    this.itemsRef = this.getRef().child("items");
+    // this.itemsRef = this.getRef().child("items");
+    this.itemsRef = this.getRef();
 
     this.renderRow = this.renderRow.bind(this);
     this.pressRow = this.pressRow.bind(this);
@@ -34,6 +25,7 @@ export default class App extends Component {
 
   componentWillMount() {
     this.getItems(this.itemsRef);
+    console.log(this.getItems(this.itemsRef));
   }
 
   componentDidMount() {
@@ -41,15 +33,19 @@ export default class App extends Component {
   }
 
   getItems(itemsRef) {
+    console.log("is this happening?");
     // let items = [{ title: "Item One" }, { title: "Item Two" }];
     itemsRef.on("value", snap => {
+      console.log("am i in here?");
       let items = [];
+      console.log(items, "item1");
       snap.forEach(child => {
         items.push({
           title: child.val().title,
           _key: child.key
         });
       });
+      console.log(items, "item2");
       this.setState({
         itemDataSource: this.state.itemDataSource.cloneWithRows(items)
       });
